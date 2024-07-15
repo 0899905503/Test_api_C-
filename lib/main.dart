@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:meas/pizza/Cart/Cart_view.dart';
+import 'package:meas/pizza/Login/login_view.dart';
+import 'package:meas/pizza/Login/login_viewmodel.dart';
 import 'package:meas/pizza/Order/order_view.dart';
 import 'package:meas/pizza/Order/order_viewmodel.dart';
 
@@ -18,12 +20,13 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => OrderViewModel()),
+        ChangeNotifierProvider(create: (_) => LoginViewModel()),
       ],
       child: Builder(
         builder: (context) {
           // Use GetMaterialApp here to access providers
           return GetMaterialApp(
-            home: MainPage(),
+            home: Login(),
             getPages: [
               GetPage(name: '/orderPage', page: () => const OrderPage()),
               GetPage(name: '/mainPage', page: () => MainPage())

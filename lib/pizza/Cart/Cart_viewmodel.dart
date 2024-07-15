@@ -38,6 +38,38 @@ class CartViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> deleteItem(int index) async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://localhost:5014/api/Cart/$index'),
+      );
+
+      if (response.statusCode == 200) {
+        print('Delete Successful');
+      } else {
+        print('Error deleting item: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+  Future<void> clearCart() async {
+    try {
+      final response = await http.delete(
+        Uri.parse('http://localhost:5014/api/Cart/clear'),
+      );
+
+      if (response.statusCode == 200) {
+        print('Delete Successful');
+      } else {
+        print('Error deleting item: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
   @override
   void dispose() {
     super.dispose();

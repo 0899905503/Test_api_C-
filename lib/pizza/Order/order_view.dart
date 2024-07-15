@@ -1,16 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:intl/intl.dart';
 import 'package:meas/pizza/Order/order_viewmodel.dart';
 import 'package:meas/routes/routes.dart';
-
-import 'package:pusher_channels_flutter/pusher-js/core/transports/url_schemes.dart';
 
 class TkHomeArguments {
   String param;
@@ -47,6 +41,11 @@ class OrderChildPage extends StatefulWidget {
 class _OrderChildPageState extends State<OrderChildPage> {
   String? FlavorPizza;
   String? TypePizza;
+
+  String? flavorCart;
+  String? tasteCart;
+  double? totalCart;
+
   List<Map<String, dynamic>>? tastePizza;
   List<Map<String, dynamic>>? flavorPizza;
   OrderViewModel a = OrderViewModel();
@@ -57,11 +56,18 @@ class _OrderChildPageState extends State<OrderChildPage> {
   @override
   void initState() {
     super.initState();
+    flavorCart = Get.arguments['flavor'];
+    tasteCart = Get.arguments['taste'];
+    totalCart = Get.arguments['total'];
     // Nhận dữ liệu từ arguments khi khởi tạo màn hình
     FlavorPizza = Get.arguments['Flavor'];
     TypePizza = Get.arguments['Type'];
-    fetchTaste(int.parse(TypePizza!));
-    fetchFlavor(int.parse(FlavorPizza!));
+    if (tasteCart == null) {
+      fetchTaste(int.parse(TypePizza!));
+    }
+    if (flavorCart == null) {
+      fetchFlavor(int.parse(FlavorPizza!));
+    }
     // infor();
   }
 
@@ -101,9 +107,10 @@ class _OrderChildPageState extends State<OrderChildPage> {
   }
 
   Widget _buildBodyWidget() {
-    double total = tastePizza![0]['price'] + flavorPizza![0]['price'];
-    tasteController.text = tastePizza![0]['taste'];
-    flavorController.text = flavorPizza![0]['flavor'];
+    double total =
+        totalCart ?? (tastePizza![0]['price'] + flavorPizza![0]['price']);
+    tasteController.text = tasteCart ?? tastePizza![0]['taste'];
+    flavorController.text = flavorCart ?? flavorPizza![0]['flavor'];
     priceController.text = total.toString();
     return Container(
       child: Center(

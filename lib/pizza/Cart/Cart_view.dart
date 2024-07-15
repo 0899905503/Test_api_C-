@@ -1,8 +1,13 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import 'package:http/http.dart' as http;
 
 import 'package:meas/pizza/Cart/Cart_viewmodel.dart';
+import 'package:meas/routes/routes.dart';
 
 class TkHomeArguments {
   String param;
@@ -70,30 +75,56 @@ class _CartChildPageState extends State<CartChildPage> {
   }
 
   Widget _buildBodyWidget() {
-    return Center(
-      child: SingleChildScrollView(
-        child: DataTable(
-          columns: const [
-            DataColumn(label: Text('Id')),
-            DataColumn(label: Text('Type')),
-            DataColumn(label: Text('Flavor')),
-            DataColumn(label: Text('Price')),
-          ],
-          rows: List<DataRow>.generate(history!.length, (index) {
-            var item = history![index];
-            return DataRow(cells: [
-              DataCell(
-                  Text(item['id'] != null ? item['id'].toString() : 'null')),
-              DataCell(Text(
-                  item['taste'] != null ? item['taste'].toString() : 'null')),
-              DataCell(Text(
-                  item['flavor'] != null ? item['flavor'].toString() : 'null')),
-              DataCell(Text(
-                  item['price'] != null ? item['price'].toString() : 'null')),
-            ]);
-          }),
+    return Column(
+      children: [
+        ElevatedButton(
+            onPressed: () async {
+              await a.clearCart();
+              setState(() {
+                history?.clear();
+              });
+            },
+            child: Text("Clear Cart")),
+        const SizedBox(
+          height: 20,
         ),
-      ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: history!.length,
+            itemBuilder: (context, index) {
+              var cart = history?[index];
+              return Card(
+                child: ListTile(
+                  leading: SizedBox(width: 50, height: 50, child: Text("")),
+                  title: Text(
+                      cart!['id'] != null ? cart['id'].toString() : 'null'),
+                  subtitle: Text(cart['taste'] != null
+                      ? cart['taste'].toString()
+                      : 'null'),
+                  onTap: () {
+                    // Gọi hàm xử lý sự kiện khi tiêu đề được nhấn
+                    Get.toNamed(RouteConfig.orderPage, arguments: {
+                      'taste': cart['taste'].toString(),
+                      'flavor': cart['flavor'].toString(),
+                      'total': cart['price']
+                    });
+                    //   print(user!['users'][index]['id']);
+                  },
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                      await a.deleteItem(cart['id']);
+                      setState(() {
+                        history?.removeAt(index);
+                      });
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
